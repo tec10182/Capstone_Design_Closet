@@ -1,0 +1,27 @@
+  0%|                                                                                                                                                                                         | 0/10000000 [00:01<?, ?it/s]
+tensor([[-12.5703, -11.0547, -11.9922,  ..., -12.2578, -10.4922,  -8.4219],
+        [ -8.1172,  -9.0625,  -8.5625,  ...,  -7.6289,  -7.8594,  -8.1641],
+        [ -8.1406, -10.6484,  -9.6562,  ...,  -9.4531,  -7.3164, -10.2500],
+        ...,
+        [ -8.0156,  -8.4219,  -8.3594,  ...,  -8.1953,  -8.4609,  -7.5781],
+        [ -8.3828,  -9.9062,  -9.4609,  ...,  -8.9609,  -8.7031,  -8.7109],
+        [ -6.6094,  -7.6016,  -6.6406,  ...,  -6.1953,  -7.0547,  -6.8594]],
+       device='cuda:0', dtype=torch.float16, grad_fn=<AddmmBackward0>)
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 135, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 88, in train
+    out = embedder(rep)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\model\embedder.py", line 13, in forward
+    x = self.fc1(x)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\linear.py", line 117, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (10x1000 and 2048x64)

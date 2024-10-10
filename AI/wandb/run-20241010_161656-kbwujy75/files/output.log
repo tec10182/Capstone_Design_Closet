@@ -1,0 +1,19 @@
+  0%|                                                                                                                                                                                         | 0/10000000 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 134, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 87, in train
+    out = embedder(rep)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\model\embedder.py", line 13, in forward
+    x = self.fc1(x)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\linear.py", line 117, in forward
+    return F.linear(input, self.weight, self.bias)
+TypeError: linear(): argument 'input' (position 1) must be Tensor, not ImageClassifierOutputWithNoAttention

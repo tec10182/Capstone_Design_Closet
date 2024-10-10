@@ -1,0 +1,15 @@
+  0%|                                                                                                                                                                            | 0/10000000 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 131, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 78, in train
+    for idx, (images, num_crops) in enumerate(dataloader):
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\utils\data\dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\utils\data\dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\utils\data\_utils\fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 21, in collate_fn
+    print(batch.shape)
+AttributeError: 'list' object has no attribute 'shape'

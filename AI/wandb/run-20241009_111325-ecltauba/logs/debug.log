@@ -1,0 +1,26 @@
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Current SDK version is 0.18.2
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Configure stats pid to 16284
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Loading settings from C:\Users\kms\.config\wandb\settings
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Loading settings from C:\Users\kms\Capstone_Design_Closet\ai\wandb\settings
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Loading settings from environment variables: {}
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Applying setup settings: {'mode': None, '_disable_service': None}
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Inferring run settings from compute environment: {'program_relpath': 'train.py', 'program_abspath': 'C:\\Users\\kms\\Capstone_Design_Closet\\ai\\train.py', 'program': 'C:\\Users\\kms\\Capstone_Design_Closet\\ai\\train.py'}
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_setup.py:_flush():79] Applying login settings: {}
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:_log_setup():532] Logging user logs to C:\Users\kms\Capstone_Design_Closet\ai\wandb\run-20241009_111325-ecltauba\logs\debug.log
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:_log_setup():533] Logging internal logs to C:\Users\kms\Capstone_Design_Closet\ai\wandb\run-20241009_111325-ecltauba\logs\debug-internal.log
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:init():616] calling init triggers
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:init():623] wandb.init called with sweep_config: {}
+config: {'batch_size': 2, 'domain_adaptation': 'n', 'generator': 'microsoft/resnet-50', 'checkpoint': None, 'image_dir': 'd:\\dataset\\project_dataset', 'meta_dir': 'd:\\dataset\\label2.csv', 'dimension': 64, 'save': 'd:\\model\\pathsh tr'}
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:init():666] starting backend
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [wandb_init.py:init():670] sending inform_init request
+2024-10-09 11:13:25,873 INFO    MainThread:16284 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=spawn, using: spawn
+2024-10-09 11:13:25,881 INFO    MainThread:16284 [wandb_init.py:init():683] backend started and connected
+2024-10-09 11:13:25,886 INFO    MainThread:16284 [wandb_init.py:init():778] updated telemetry
+2024-10-09 11:13:25,887 INFO    MainThread:16284 [wandb_init.py:init():811] communicating run to backend with 90.0 second timeout
+2024-10-09 11:13:26,972 INFO    MainThread:16284 [wandb_init.py:init():862] starting run threads in backend
+2024-10-09 11:13:27,110 INFO    MainThread:16284 [wandb_run.py:_console_start():2464] atexit reg
+2024-10-09 11:13:27,110 INFO    MainThread:16284 [wandb_run.py:_redirect():2312] redirect: wrap_raw
+2024-10-09 11:13:27,110 INFO    MainThread:16284 [wandb_run.py:_redirect():2377] Wrapping output streams.
+2024-10-09 11:13:27,110 INFO    MainThread:16284 [wandb_run.py:_redirect():2402] Redirects installed.
+2024-10-09 11:13:27,115 INFO    MainThread:16284 [wandb_init.py:init():906] run started, returning control to user process
+2024-10-09 11:13:27,455 WARNING MsgRouterThr:16284 [router.py:message_loop():77] message_loop has been closed

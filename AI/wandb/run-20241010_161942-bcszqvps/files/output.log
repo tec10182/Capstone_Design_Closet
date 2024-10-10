@@ -1,0 +1,27 @@
+  0%|                                                                                                                                                                                         | 0/10000000 [00:01<?, ?it/s]
+ImageClassifierOutputWithNoAttention(loss=None, logits=tensor([[ -8.4688,  -5.1055,  -8.1953,  ...,  -9.7656,  -8.3750,  -8.0859],
+        [ -7.5703,  -7.3047,  -8.2734,  ...,  -6.3789,  -6.9766,  -6.8672],
+        [-11.9922, -10.6484, -12.0000,  ..., -12.3594, -10.0938,  -8.7891],
+        ...,
+        [ -9.5625, -11.4375,  -9.4688,  ...,  -9.0000,  -9.3906, -10.1875],
+        [ -6.5625,  -9.7344,  -7.6484,  ...,  -8.5312,  -7.4336,  -7.2812],
+        [ -7.1484,  -8.1172,  -8.4609,  ...,  -9.4062, -10.0625,  -8.9062]],
+       device='cuda:0', dtype=torch.float16, grad_fn=<AddmmBackward0>), hidden_states=None)
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 135, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\train.py", line 88, in train
+    out = embedder(rep)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\AI\model\embedder.py", line 13, in forward
+    x = self.fc1(x)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\linear.py", line 117, in forward
+    return F.linear(input, self.weight, self.bias)
+TypeError: linear(): argument 'input' (position 1) must be Tensor, not ImageClassifierOutputWithNoAttention

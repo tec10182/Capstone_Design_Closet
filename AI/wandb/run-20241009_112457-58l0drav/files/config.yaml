@@ -1,0 +1,46 @@
+_wandb:
+    value:
+        cli_version: 0.18.2
+        m: []
+        python_version: 3.10.6
+        t:
+            "1":
+                - 1
+                - 11
+                - 41
+                - 49
+                - 55
+            "2":
+                - 1
+                - 11
+                - 41
+                - 49
+                - 55
+            "3":
+                - 16
+                - 23
+                - 55
+            "4": 3.10.6
+            "5": 0.18.2
+            "6": 4.45.1
+            "8":
+                - 3
+                - 5
+            "12": 0.18.2
+            "13": windows-amd64
+batch_size:
+    value: 2
+checkpoint:
+    value: null
+dimension:
+    value: 64
+domain_adaptation:
+    value: "n"
+generator:
+    value: microsoft/resnet-50
+image_dir:
+    value: d:\dataset\project_dataset
+meta_dir:
+    value: d:\dataset\label2.csv
+save:
+    value: d:\model\pathsh tr

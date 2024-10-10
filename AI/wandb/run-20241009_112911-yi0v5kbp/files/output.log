@@ -1,0 +1,7 @@
+  0%|                                                                                                                                                                            | 0/10000000 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 129, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 79, in train
+    images = torch.stack(images).to(device)
+TypeError: stack(): argument 'tensors' (position 1) must be tuple of Tensors, not Tensor

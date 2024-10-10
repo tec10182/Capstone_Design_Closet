@@ -1,0 +1,9 @@
+  0%|                                                                                                                                                                            | 0/10000000 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 130, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 78, in train
+    with torch.autocast(device_type=device, dtype=torch.float16):
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\amp\autocast_mode.py", line 225, in __init__
+    raise ValueError(
+ValueError: Expected `device_type` of type `str`, got: `<class 'torch.device'>`

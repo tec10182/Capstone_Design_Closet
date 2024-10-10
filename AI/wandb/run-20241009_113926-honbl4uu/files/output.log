@@ -1,0 +1,45 @@
+  0%|                                                                                                                                                                            | 0/10000000 [00:00<?, ?it/s]
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+torch.Size([3, 224, 224])
+Batch size: 2
+Item 0 shape: torch.Size([5, 224, 3, 224])
+Item 1 shape: torch.Size([5, 224, 3, 224])
+torch.Size([10, 224, 3, 224])
+Traceback (most recent call last):
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 134, in <module>
+    train(args)
+  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 86, in train
+    rep = generator(images)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\_dynamo\eval_frame.py", line 433, in _fn
+    return fn(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\transformers\models\resnet\modeling_resnet.py", line 406, in forward
+    outputs = self.resnet(pixel_values, output_hidden_states=output_hidden_states, return_dict=return_dict)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\transformers\models\resnet\modeling_resnet.py", line 345, in forward
+    embedding_output = self.embedder(pixel_values)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\torch\nn\modules\module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\kms\Capstone_Design_Closet\project\lib\site-packages\transformers\models\resnet\modeling_resnet.py", line 92, in forward
+    raise ValueError(
+ValueError: Make sure that the channel dimension of the pixel values match with the one set in the configuration.
