@@ -1,7 +1,0 @@
-  0%|                                                                                                                                                                            | 0/10000000 [00:00<?, ?it/s]
-Traceback (most recent call last):
-  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 130, in <module>
-    train(args)
-  File "C:\Users\kms\Capstone_Design_Closet\ai\train.py", line 79, in train
-    images = torch.stack(images).to(device)
-UnboundLocalError: local variable 'images' referenced before assignment

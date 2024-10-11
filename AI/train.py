@@ -1,6 +1,6 @@
 import argparse
 import json
-from transformers import AutoModelForImageClassification
+from transformers import AutoModelForImageClassification, AutoConfig
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -28,10 +28,33 @@ def collate_fn(batch):
     return torch.cat(images, dim=0), num_images
 
 
+def validate(generator, embedder, vloader, device):
+    generator.eval()
+    embedder.eval()
+    total_loss = 0
+    n = 0
+
+    with torch.no_grad():  # Disable gradient computation for validation
+        for idx, (images, num_crops) in enumerate(vloader):
+            images = images.to(device)
+            num_crops = torch.tensor(num_crops).to(device)
+
+            rep = generator(images).logits
+            out = embedder(rep)
+
+            loss = validate_similarity(out, num_crops)
+
+            total_loss += loss[0]
+            n += loss[1]
+
+    return total_loss / n
+
+
 def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     generator = AutoModelForImageClassification.from_pretrained(args.generator)
+
     embedder = Embedder(dim=args.dimension)
 
     if args.checkpoint is not None:
@@ -56,51 +79,81 @@ def train(args):
 
     transform = transforms.Compose(
         [
-            RandomSquareCrop(),
+            # RandomSquareCrop(),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ]
     )
 
     dataset = CustomDataset(
-        image_dir=args.image_dir, meta_dir=args.meta_dir, transform=transform
+        image_dir=args.image_dir, meta_dir=args.train_dir, transform=transform
     )
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, collate_fn=collate_fn)
+    valset = CustomDataset(
+        image_dir=args.image_dir, meta_dir=args.val_dir, transform=transform
+    )
 
-    criterion = ContrastiveLoss(tau=0.5)
+    dataloader = DataLoader(
+        dataset,
+        batch_size=args.batch_size,
+        collate_fn=collate_fn,
+        shuffle=True,
+        drop_last=True,
+    )
 
-    generator.train()
-    embedder.train()
+    vloader = DataLoader(
+        dataset,
+        batch_size=args.batch_size,
+        collate_fn=collate_fn,
+    )
+
+    criterion = ContrastiveLoss(tau=0.1)
 
     early_stopping = EarlyStopping(patience=10, min_delta=0.01)
+    scaler = torch.amp.GradScaler()
 
     wandb.init(project="Capstone_design", config=args)
 
-    for epoch in tqdm(range(10000000)):
+    for epoch in range(10000000):
+
+        generator.train()
+        embedder.train()
+
         epoch_loss = 0
-        for idx, (images, num_crops) in enumerate(dataloader):
-            with torch.autocast(device_type=device.type, dtype=torch.float16):
-                images = images.to(device)
-                num_crops = torch.tensor(num_crops).to(device)
+        n = 0
+        for idx, (images, num_crops) in tqdm(
+            enumerate(dataloader), total=len(dataloader), desc=f"Epoch {epoch+1}"
+        ):
+            # with torch.autocast(device_type=device.type, dtype=torch.float16):
+            images = images.to(device)
+            num_crops = torch.tensor(num_crops).to(device)
 
-                rep = generator(images).logits
-                out = embedder(rep)
+            rep = generator(images).logits
+            out = embedder(rep)
 
-                print(out.shape)
-                print(num_crops.shape)
-                print(num_crops)
-
-                loss = criterion(out, num_crops)
+            loss = criterion(out, num_crops)
 
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
 
+            if not torch.isfinite(loss):
+                continue
+
+            # scaler.scale(loss).backward()
+            # scaler.step(optimizer)
+            # scaler.update()
+            # optimizer.zero_grad()
+
             epoch_loss += loss.item()
             wandb.log({"batch_loss": loss.item(), "epoch": epoch, "batch": idx})
+            n += 1
 
-        wandb.log({"epoch_loss": epoch_loss, "epoch": epoch})
-        early_stopping(epoch_loss)
+        val = validate(generator, embedder, vloader, device)
+        print("val:", val)
+        print("loss:", epoch_loss / n)
+
+        wandb.log({"epoch_loss": epoch_loss, "epoch": epoch, "val_sim": val})
+        early_stopping(epoch_loss / n)
 
         # 10epoch마다 모델 저장
         if (epoch + 1) % 10 == 0:
@@ -129,9 +182,10 @@ if __name__ == "__main__":
     args.add_argument("-g", "--generator", type=str, required=True)
     args.add_argument("-c", "--checkpoint", type=str, default=None)
     args.add_argument("-id", "--image_dir", type=str, required=True)
-    args.add_argument("-md", "--meta_dir", type=str, required=True)
+    args.add_argument("-md", "--train_dir", type=str, required=True)
     args.add_argument("-d", "--dimension", type=int, default=64)
     args.add_argument("-s", "--save", type=str, required=True)
+    args.add_argument("-vd", "--val_dir", type=str, required=True)
 
     args = args.parse_args()
 

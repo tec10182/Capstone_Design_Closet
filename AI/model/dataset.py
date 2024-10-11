@@ -11,7 +11,8 @@ class CustomDataset(Dataset):
         self.image_dir = image_dir
         self.meta_dir = meta_dir
         self.transform = transform
-        self.image_filenames = os.listdir(image_dir)
+        self.meta = pd.read_csv(self.meta_dir)
+        self.image_filenames = self.meta["img_name"].dropna().astype(str).values
 
     def __len__(self):
         return len(self.image_filenames)
@@ -20,11 +21,18 @@ class CustomDataset(Dataset):
         img_name = os.path.join(self.image_dir, self.image_filenames[idx])
         image = Image.open(img_name).convert("RGB")
 
-        meta = pd.read_csv(self.meta_dir)
-        x = meta.loc[meta["img_name"] == self.image_filenames[idx], "x"].values[0]
-        y = meta.loc[meta["img_name"] == self.image_filenames[idx], "y"].values[0]
-        w = meta.loc[meta["img_name"] == self.image_filenames[idx], "width"].values[0]
-        h = meta.loc[meta["img_name"] == self.image_filenames[idx], "height"].values[0]
+        x = self.meta.loc[
+            self.meta["img_name"] == self.image_filenames[idx], "x"
+        ].values[0]
+        y = self.meta.loc[
+            self.meta["img_name"] == self.image_filenames[idx], "y"
+        ].values[0]
+        w = self.meta.loc[
+            self.meta["img_name"] == self.image_filenames[idx], "width"
+        ].values[0]
+        h = self.meta.loc[
+            self.meta["img_name"] == self.image_filenames[idx], "height"
+        ].values[0]
 
         x = x.split(",")
         y = y.split(",")
