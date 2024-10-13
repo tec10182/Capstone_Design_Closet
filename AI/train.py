@@ -14,6 +14,7 @@ from model.embedder import *
 from model.loss import *
 from tqdm import tqdm
 import os
+from torchvision import models
 
 
 def collate_fn(batch):
@@ -31,7 +32,8 @@ def collate_fn(batch):
 def validate(generator, embedder, vloader, device):
     generator.eval()
     embedder.eval()
-    total_loss = 0
+    pos_loss = 0
+    neg_loss = 0
     n = 0
 
     with torch.no_grad():  # Disable gradient computation for validation
@@ -39,21 +41,25 @@ def validate(generator, embedder, vloader, device):
             images = images.to(device)
             num_crops = torch.tensor(num_crops).to(device)
 
-            rep = generator(images).logits
+            rep = generator(images)
             out = embedder(rep)
 
             loss = validate_similarity(out, num_crops)
 
-            total_loss += loss[0]
-            n += loss[1]
+            pos_loss += loss[0]
+            neg_loss += loss[1]
+            n += loss[2]
 
-    return total_loss / n
+    return [pos_loss / n, neg_loss / n]
 
 
 def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    generator = AutoModelForImageClassification.from_pretrained(args.generator)
+    # generator = AutoModelForImageClassification.from_pretrained(args.generator)
+    generator = models.resnet50(pretrained=True)
+    # generator = torch.nn.Sequential(*(list(generator.children())[:-1]))
+    generator.fc = torch.nn.Identity()
 
     embedder = Embedder(dim=args.dimension)
 
@@ -65,7 +71,7 @@ def train(args):
         print("No checkpoint provided. Initializing a new model.")
 
     optimizer = optim.Adam(
-        list(generator.parameters()) + list(embedder.parameters()), lr=0.001
+        list(generator.parameters()) + list(embedder.parameters()), lr=0.0001
     )
 
     if args.checkpoint is not None and "optimizer_state_dict" in checkpoint:
@@ -79,7 +85,7 @@ def train(args):
 
     transform = transforms.Compose(
         [
-            # RandomSquareCrop(),
+            RandomSquareCrop(),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ]
@@ -101,12 +107,12 @@ def train(args):
     )
 
     vloader = DataLoader(
-        dataset,
+        valset,
         batch_size=args.batch_size,
         collate_fn=collate_fn,
     )
 
-    criterion = ContrastiveLoss(tau=0.1)
+    criterion = ContrastiveLoss(tau=0.07)
 
     early_stopping = EarlyStopping(patience=10, min_delta=0.01)
     scaler = torch.amp.GradScaler()
@@ -127,7 +133,7 @@ def train(args):
             images = images.to(device)
             num_crops = torch.tensor(num_crops).to(device)
 
-            rep = generator(images).logits
+            rep = generator(images)
             out = embedder(rep)
 
             loss = criterion(out, num_crops)
@@ -149,15 +155,22 @@ def train(args):
             n += 1
 
         val = validate(generator, embedder, vloader, device)
-        print("val:", val)
         print("loss:", epoch_loss / n)
 
-        wandb.log({"epoch_loss": epoch_loss, "epoch": epoch, "val_sim": val})
-        early_stopping(epoch_loss / n)
+        wandb.log(
+            {
+                "epoch_loss": epoch_loss,
+                "epoch": epoch,
+                "val_pos": val[0],
+                "val_neg": val[1],
+            }
+        )
+        # early_stopping(epoch_loss / n)
 
         # 10epoch마다 모델 저장
-        if (epoch + 1) % 10 == 0:
-            save_path = os.path.join(args.save, f"model_epoch_{epoch+1}.pt")
+        if (epoch + 1) % 5 == 0:
+            save_path = os.path.join(args.save.strip(), f"model_epoch_{epoch+1}.pt")
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
             torch.save(
                 {
                     "epoch": epoch + 1,
@@ -169,9 +182,9 @@ def train(args):
                 save_path,
             )
 
-        if early_stopping.early_stop:
-            print("Stopping training early")
-            break
+        # if early_stopping.early_stop:
+        #     print("Stopping training early")
+        #     break
 
 
 if __name__ == "__main__":

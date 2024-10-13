@@ -1,5 +1,5 @@
 # 변수 설정
-$BATCH_SIZE = 4
+$BATCH_SIZE = 16
 $DOMAIN_ADAPTATION = "n"
 $GENERATOR = "microsoft/resnet-50"
 # $CHECKPOINT = 
