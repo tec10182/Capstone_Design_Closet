@@ -19,7 +19,7 @@ import random
 
 
 class RandomSquareCrop:
-    def __init__(self, min_size=30, r_range=(0.1, 0.25), apply_prob=0.5):
+    def __init__(self, min_size=30, r_range=(0.1, 0.25), apply_prob=0.0):
         self.min_size = min_size
         self.r_range = r_range
         self.apply_prob = apply_prob

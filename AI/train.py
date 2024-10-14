@@ -85,7 +85,8 @@ def train(args):
 
     transform = transforms.Compose(
         [
-            RandomSquareCrop(),
+            # RandomSquareCrop(),
+            transforms.RandomHorizontalFlip(0.5),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ]

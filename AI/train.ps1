@@ -8,7 +8,7 @@ $IMAGE_DIR = "d:\dataset\project_dataset"
 $TRAIN_DIR = "d:\dataset\train.csv"
 $SAVE_DIR = "d:\model\path"
 # $VAL_DIR = "d:\dataset\val.csv"
-$VAL_DIR = "d:\dataset\train.csv"
+$VAL_DIR = "d:\dataset\val.csv"
 
 # Python 스크립트 실행
 python train.py `
@@ -18,4 +18,5 @@ python train.py `
     --image_dir $IMAGE_DIR `
     --train_dir $TRAIN_DIR `
     --save $SAVE_DIR`
-    --val_dir $VAL_DIR
+    --val_dir $VAL_DIR`
+    # -- CHECKPOINT $CHECKPOINT
