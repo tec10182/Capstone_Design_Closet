@@ -64,7 +64,7 @@ def train(args):
     embedder = Embedder(dim=args.dimension)
 
     if args.checkpoint is not None:
-        checkpoint = torch.load(args.checkpoint)
+        checkpoint = torch.load(args.checkpoint, map_location=device)
         generator.load_state_dict(checkpoint["generator_state_dict"])
         embedder.load_state_dict(checkpoint["embedder_state_dict"])
     else:
@@ -73,9 +73,6 @@ def train(args):
     optimizer = optim.Adam(
         list(generator.parameters()) + list(embedder.parameters()), lr=0.0001
     )
-
-    if args.checkpoint is not None and "optimizer_state_dict" in checkpoint:
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 
     generator = generator.to(device)
     embedder = embedder.to(device)
@@ -105,12 +102,16 @@ def train(args):
         collate_fn=collate_fn,
         shuffle=True,
         drop_last=True,
+        num_workers=4,
+        pin_memory=True,
     )
 
     vloader = DataLoader(
         valset,
         batch_size=args.batch_size,
         collate_fn=collate_fn,
+        num_workers=4,
+        pin_memory=True,
     )
 
     criterion = ContrastiveLoss(tau=0.07)
@@ -130,7 +131,6 @@ def train(args):
         for idx, (images, num_crops) in tqdm(
             enumerate(dataloader), total=len(dataloader), desc=f"Epoch {epoch+1}"
         ):
-            # with torch.autocast(device_type=device.type, dtype=torch.float16):
             images = images.to(device)
             num_crops = torch.tensor(num_crops).to(device)
 
@@ -138,24 +138,19 @@ def train(args):
             out = embedder(rep)
 
             loss = criterion(out, num_crops)
-
             loss.backward()
+
             optimizer.step()
             optimizer.zero_grad()
-
-            if not torch.isfinite(loss):
-                continue
-
-            # scaler.scale(loss).backward()
-            # scaler.step(optimizer)
-            # scaler.update()
-            # optimizer.zero_grad()
 
             epoch_loss += loss.item()
             wandb.log({"batch_loss": loss.item(), "epoch": epoch, "batch": idx})
             n += 1
 
         val = validate(generator, embedder, vloader, device)
+        print(n)
+        if n == 0:
+            print(epoch_loss)
         print("loss:", epoch_loss / n)
 
         wandb.log(
@@ -164,12 +159,15 @@ def train(args):
                 "epoch": epoch,
                 "val_pos": val[0],
                 "val_neg": val[1],
+                "n": n,
             }
         )
         # early_stopping(epoch_loss / n)
+        print(f"GPU memory allocated: {torch.cuda.memory_allocated(device)} bytes")
+        print(f"GPU memory cached: {torch.cuda.memory_reserved(device)} bytes")
 
         # 10epoch마다 모델 저장
-        if (epoch + 1) % 5 == 0:
+        if (epoch + 1) % 1 == 0:
             save_path = os.path.join(args.save.strip(), f"model_epoch_{epoch+1}.pt")
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
             torch.save(

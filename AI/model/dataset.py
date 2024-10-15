@@ -21,6 +21,9 @@ class CustomDataset(Dataset):
         img_name = os.path.join(self.image_dir, self.image_filenames[idx])
         image = Image.open(img_name).convert("RGB")
 
+        if not os.path.exists(img_name):
+            print(f"Warning: File {img_name} not found.")
+
         x = self.meta.loc[
             self.meta["img_name"] == self.image_filenames[idx], "x"
         ].values[0]
@@ -53,7 +56,4 @@ class CustomDataset(Dataset):
                 cropped_image = self.transform(cropped_image)
 
             cropped_images.append(cropped_image)
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        return torch.stack(cropped_images).to(device), len(
-            cropped_images
-        )  # (N, C, H, W)
+        return torch.stack(cropped_images), len(cropped_images)  # (N, C, H, W)

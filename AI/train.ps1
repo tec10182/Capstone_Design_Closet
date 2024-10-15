@@ -2,7 +2,7 @@
 $BATCH_SIZE = 16
 $DOMAIN_ADAPTATION = "n"
 $GENERATOR = "microsoft/resnet-50"
-# $CHECKPOINT = 
+$CHECKPOINT = "d:\model\path\model_epoch_1.pt"
 # $DIMENSION = 
 $IMAGE_DIR = "d:\dataset\project_dataset"
 $TRAIN_DIR = "d:\dataset\train.csv"
@@ -17,6 +17,5 @@ python train.py `
     --generator $GENERATOR `
     --image_dir $IMAGE_DIR `
     --train_dir $TRAIN_DIR `
-    --save $SAVE_DIR`
-    --val_dir $VAL_DIR`
-    # -- CHECKPOINT $CHECKPOINT
+    --save $SAVE_DIR `
+    --val_dir $VAL_DIR
