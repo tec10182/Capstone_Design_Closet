@@ -31,31 +31,21 @@ class ContrastiveLoss(nn.Module):
                 )
 
                 test = pos_sim
-                # pos_sim = pos_sim.sum() - torch.exp(
-                #     F.cosine_similarity(anchor, anchor, dim=0) / self.tau
-                # )
-
-                pos_sim = torch.clamp(
-                    pos_sim.sum()
-                    - torch.exp(F.cosine_similarity(anchor, anchor, dim=0) / self.tau),
-                    min=1e-8,
+                pos_sim = pos_sim.sum() - torch.exp(
+                    F.cosine_similarity(anchor, anchor, dim=0) / self.tau
                 )
 
-                # Negative similarities from other groups
-                neg_features = torch.cat(
-                    [features[: start_idx + i], features[start_idx + i + 1 :]]
+                pos_sim.clamp_(min=1e-8)
+
+                neg_sim = torch.exp(
+                    F.cosine_similarity(anchor.unsqueeze(0), features, dim=-1)
+                    / self.tau
+                ).sum()
+                neg_sim = neg_sim.sum() - torch.exp(
+                    F.cosine_similarity(anchor, anchor, dim=0) / self.tau
                 )
-                # neg_sim = torch.exp(
-                #     F.cosine_similarity(anchor.unsqueeze(0), neg_features, dim=-1)
-                #     / self.tau
-                # ).sum()
-                neg_sim = torch.clamp(
-                    torch.exp(
-                        F.cosine_similarity(anchor.unsqueeze(0), neg_features, dim=-1)
-                        / self.tau
-                    ).sum(),
-                    min=1e-8,
-                )
+                # neg_sim = neg_sim.sum() - torch.exp(torch.tensor(1.0 / self.tau))
+                neg_sim = neg_sim.clamp_(min=1e-8)
 
                 loss = -torch.log(pos_sim / neg_sim)
                 total_loss += loss
