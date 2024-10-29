@@ -16,8 +16,7 @@ origins = [
     "*",
 ]
 
-black_list = [
-]
+black_list = []
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,4 +26,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix='/api/v1')
+app.include_router(api_router, prefix="/api/v1")
