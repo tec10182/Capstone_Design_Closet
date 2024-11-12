@@ -21,7 +21,7 @@ from sympy.integrals.meijerint_doc import category
 from db import *
 
 from model.tryon.masking.model import predict_mask
-#from model.tryon.schp import human_parsing
+from model.tryon.schp.model import human_parsing
 
 router = APIRouter()
 

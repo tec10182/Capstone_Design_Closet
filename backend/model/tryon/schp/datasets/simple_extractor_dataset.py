@@ -22,7 +22,7 @@ import numpy as np
 import os
 
 # custom-library
-from infra.preprocess.human_parser.schp.utils.transforms import get_affine_transform
+from model.tryon.schp.utils.transforms import get_affine_transform
 
 
 class SimpleFolderDataset(data.Dataset):
@@ -110,6 +110,7 @@ class SimpleFolderTestDataset(data.Dataset):
         return center, scale
 
     def __getitem__(self, idx):
+        print(self.img_path)
         img = cv2.imread(self.img_path, cv2.IMREAD_COLOR)
         h, w, _ = img.shape
 

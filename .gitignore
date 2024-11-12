@@ -8,3 +8,5 @@ backend/model/tryon/hr_viton/checkpoints/
 backend/model/compatibility/src/checkpoints/
 
 backend/model/descriptor/blip_base_fashion/
+
+backend/model/tryon/schp/checkpoints/

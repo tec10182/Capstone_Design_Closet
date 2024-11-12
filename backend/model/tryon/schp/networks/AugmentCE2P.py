@@ -23,7 +23,7 @@ import os
 import functools
 
 # custom-library
-#from infra.preprocess.human_parser.schp.modules import InPlaceABNSync
+from model.tryon.schp.modules import InPlaceABNSync
 
 BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
 

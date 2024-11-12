@@ -28,12 +28,16 @@ from tqdm import tqdm
 from pathlib import Path
 
 # custom-library
-# import infra.preprocess.human_parser.schp.networks as networks
-# from infra.preprocess.human_parser.schp.utils.transforms import transform_logits
-# from infra.preprocess.human_parser.schp.datasets.simple_extractor_dataset import SimpleFolderTestDataset
+import model.tryon.schp.networks as networks
+from model.tryon.schp.utils.transforms import transform_logits
+from model.tryon.schp.datasets.simple_extractor_dataset import SimpleFolderTestDataset
 
+from model.tryon.schp.config import get_config
 
 from collections import OrderedDict
+
+
+
 
 warnings.filterwarnings('ignore')
 
@@ -69,8 +73,8 @@ class SCHP():
         PROJECT_ROOT = Path(__file__).absolute().parents[0].absolute()
 
         # pretrained 모델 경로 
-        self.resnet_path = osp.join(PROJECT_ROOT, 'pretrained', 'resnet101-imagenet.pth')
-        self.human_parsing_path = osp.join(PROJECT_ROOT, 'pretrained', 'final.pth')
+        self.resnet_path = osp.join(PROJECT_ROOT, 'checkpoints', 'resnet101-imagenet.pth')
+        self.human_parsing_path = osp.join(PROJECT_ROOT, 'checkpoints', 'exp-schp-201908261155-lip.pth')
 
         
     def get_palette(self, num_cls):
@@ -129,8 +133,8 @@ class SCHP():
             transforms.Normalize(mean=[0.406, 0.456, 0.485], std=[0.225, 0.224, 0.229])
         ])
 
-        img_path = osp.join(storage_root, "raw_data/person", img_name)
-        save_path = osp.join(storage_root, "preprocess/human_parse", img_name)
+        img_path = osp.join(storage_root, "tryon/raw_data/person", img_name)
+        save_path = osp.join(storage_root, "tryon/preprocess/human_parse", img_name)
 
         dataset = SimpleFolderTestDataset(img_path, input_size=input_size, transform=transform)
         dataloader = DataLoader(dataset)
@@ -170,5 +174,7 @@ class SCHP():
         return save_state
 
 def human_parsing(storage_root: str, img_name: str):
+    schp = SCHP(get_config())
+    save_state = schp.inference(storage_root, img_name)
 
-    return True
+    return save_state

@@ -24,7 +24,7 @@ import numpy as np
 import cv2
 
 # custom-library
-from infra.preprocess.human_parser.schp.utils.transforms import get_affine_transform
+from model.tryon.schp.utils.transforms import get_affine_transform
 
 
 class LIPDataSet(data.Dataset):
