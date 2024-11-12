@@ -53,4 +53,40 @@ def write_user(db: Session, id: str, password: str):
     except Exception as e:
         db.rollback()  # 오류 발생 시 롤백
         raise HTTPException(status_code=500, detail="DB ERROR")
-    return {"success": True, "msg": "유저가 성공적으로 추가되었습니다"}
+    return
+
+
+def erase_user(db: Session, id: str, password: str):
+    try:
+        sql = text("DELETE FROM users WHERE id = :id AND password = :password;")
+        result = db.execute(sql, {"id": id, "password": password})
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="DB ERROR")
+
+    return
+
+
+def read_image_from_id(db: Session, id: str):
+    try:
+        images = []
+        category = []
+        sql = text(
+            """
+            SELECT img_name, category 
+            FROM items 
+            WHERE id = :id; 
+            """
+        )
+        result = db.execute(sql, {"id": id})
+
+        for row in result.fetchall():
+            images.append(row[0])
+            category.append(row[1])
+        print(1)
+
+        return {"image": images, "category": category}
+    except Exception as e:
+        # 예외가 발생하면 서버 오류 반환
+        raise HTTPException(status_code=500, detail="DB ERROR")

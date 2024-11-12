@@ -103,9 +103,91 @@ def delete_user(user_id):
         connection.close()
 
 
+# 새로운 테이블 생성 함수
+def create_items_table():
+    connection = connect_to_postgres(dbname="closet")
+    cursor = connection.cursor()
+
+    create_items_table_query = """
+    CREATE TABLE IF NOT EXISTS items (
+        id VARCHAR(255),
+        img_name VARCHAR(255) UNIQUE,
+        description VARCHAR(255),
+        category VARCHAR(255),
+        embedding VARCHAR(255)
+    );
+    """
+
+    try:
+        cursor.execute(create_items_table_query)
+        connection.commit()
+        print("Table 'items' created successfully")
+    except Exception as e:
+        print(f"Error creating table 'items': {e}")
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# 아이템 삽입 함수
+def insert_item(id, img_name, description, category, embedding):
+    connection = connect_to_postgres(dbname="closet")
+    cursor = connection.cursor()
+
+    insert_item_query = """
+    INSERT INTO items (id, img_name, description, category, embedding)
+    VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT (img_name) DO NOTHING;
+    """
+
+    try:
+        cursor.execute(
+            insert_item_query, (id, img_name, description, category, embedding)
+        )
+        connection.commit()
+        print(f"Item '{img_name}' inserted successfully")
+    except Exception as e:
+        print(f"Error inserting item '{img_name}': {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def clear_tables():
+    connection = connect_to_postgres(dbname="closet")
+    cursor = connection.cursor()
+
+    try:
+        # 모든 테이블 데이터 삭제
+        cursor.execute("TRUNCATE TABLE users, items RESTART IDENTITY CASCADE;")
+        connection.commit()
+        print("All tables cleared successfully")
+    except Exception as e:
+        print(f"Error clearing tables: {e}")
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def db_setting():
+    create_database()  # 데이터베이스 생성
+    create_table()  # users 테이블 생성
+    create_items_table()  # items 테이블 생성
+    clear_tables()
+    insert_user("user1", "password123")  # users 테이블에 데이터 삽입
+    insert_user("user2", "password456")  # users 테이블에 다른 유저 삽입
+
+
 if __name__ == "__main__":
     create_database()  # 데이터베이스 생성
-    create_table()  # 테이블 생성
-    insert_user("user1", "password123")  # 데이터 삽입
-    insert_user("user2", "password456")  # 다른 유저 삽입
-    delete_user("user1")  # user1 삭제
+    create_table()  # users 테이블 생성
+    create_items_table()  # items 테이블 생성
+    clear_tables()
+    insert_user("user1", "password123")  # users 테이블에 데이터 삽입
+    insert_user("user2", "password456")  # users 테이블에 다른 유저 삽입
+    # delete_user("user1")  # users 테이블에서 user1 삭제
+    # insert_item(
+    #     "user1", "1.png", "test", "top", "test.npy"
+    # )  # items 테이블에 데이터 삽입

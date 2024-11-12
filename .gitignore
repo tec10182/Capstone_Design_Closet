@@ -2,3 +2,9 @@ env
 가상환경
 .env
 db명령어
+
+backend/model/tryon/hr_viton/checkpoints/
+
+backend/model/compatibility/src/checkpoints/
+
+backend/model/descriptor/blip_base_fashion/
