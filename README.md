@@ -8,5 +8,6 @@ pip install -r requirements.txt
 
 2. 백엔드 실행
 ```
+test
 uvicorn main:app --reload
 ```
