@@ -33,14 +33,14 @@ if __name__ == "__main__":
     user = init_setting()
     st.title("가상 피팅 서비스")
 
-    if st.button("server test"):
-        url = "http://127.0.0.1:8000/api/v1/user/login"
-        data = {"id": "user2", "password": "password456"}
-        response = requests.post(url, json=data)
-        st.write(response.json())
-        data = {"id": "user12", "password": "password1234"}
-        response = requests.post(url, json=data)
-        st.write(response.json())
+    # if st.button("server test"):
+    #     url = "http://127.0.0.1:8000/api/v1/user/login"
+    #     data = {"id": "user2", "password": "password456"}
+    #     response = requests.post(url, json=data)
+    #     st.write(response.json())
+    #     data = {"id": "user12", "password": "password1234"}
+    #     response = requests.post(url, json=data)
+    #     st.write(response.json())
 
     # # 1. 사람의 정면 사진 업로드
     # st.header(":man_dancing: 정면에서 찍은 전신 사진을 올려주세요!")
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     #             st.write(res.json())
 
     # # 2. 아카빙한 상품 이미지 중 택 1
-    # st.header(":shirt: 어떤 옷을 입어보고 싶으신가요?")
+    # st.header(":shirt: 내 옷장이랑 어울리는지 확인 할까요?")
     #
     # # 파이프라인 통합 과정에서 상품이 저장되어 있는 경로가 달라질 수 있음
     # cloth_img_path = image_select(
@@ -101,12 +101,11 @@ if __name__ == "__main__":
 
 
     # 3. sample_model 사진으로 human parse 테스트
-    st.header(":art: human_parse test!")
+    st.header(":art:  test!")
 
     if st.button('test!'):
         data = {
-            "img_name": "model_sample.jpg",
-            "model_name": "hr-viton"
+            "img_name": "model_sample.jpg"
         }
         res = requests.post(url=f"http://127.0.0.1:8000/api/v1/tryon/preprocess/person", data=data)
         st.write(res.json())

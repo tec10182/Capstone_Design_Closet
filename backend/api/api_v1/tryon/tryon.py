@@ -22,6 +22,7 @@ from db import *
 
 from model.tryon.masking.model import predict_mask
 from model.tryon.schp.model import human_parsing
+from model.tryon.densepose.model import predict_dense_pose_map
 
 router = APIRouter()
 
@@ -75,25 +76,19 @@ async def save_images(img: UploadFile = File(...), category: str = Form(...)) ->
     return {"save_state": save_state, "im_name": im_name}
 
 @router.post("/preprocess/person")
-async def pp_person(img_name: str = Form(...), model_name: str = Form(...)) -> dict:
+async def pp_person(img_name: str = Form(...)) -> dict:
     """서버의 로컬 스토리지에 저장되어있는 사람 이미지의 이름을 바탕으로
     생성에 필요한 모든 전처리 과정을 수행하는 API입니다.
 
     Args:
-        img_name (str, optional): 사람 이미지의 이름입니다. Defaults to Form(...).
-        model (str, optional): 사용할 생성 모델의 이름입니다.
-        230722 기준 hr-viton, LaDi-vton 모델을 지원합니다. Defaults to Form(...).
+        img_name (str, optional): 사람 이미지의 이름입니다. Defaults to Form(...)
 
     Returns:
         dict : 모든 전처리 과정에 대한 상태가 담긴 dictionary입니다.
     """
     parse_map_save_state = human_parsing(configs['storage'], img_name)
-    #
-    # if model_name == "hr_viton":
-    #     dense_pose_save_state = await dense_pose_client.predict_dense_pose_map(configs['storage'], img_name)
-    # else:
-    #     dense_pose_save_state = False
-    #
+    dense_pose_save_state = predict_dense_pose_map(configs['storage'], img_name)
+
     # mask_save_state = await mask_client.predict_mask(configs['storage'], img_name, category='person')
     #
     # if mask_save_state:
@@ -102,7 +97,9 @@ async def pp_person(img_name: str = Form(...), model_name: str = Form(...)) -> d
     # return {"parse map": parse_map_save_state, "dense pose map": dense_pose_save_state,
     #         "mask": mask_save_state, "pose img & kpts": pose_save_state}
 
-    return {"parse_map_save_state" : parse_map_save_state}
+    return {"parse map": parse_map_save_state, "dense pose map": dense_pose_save_state}
+
+
 
 @router.post("/preprocess/cloth")
 async def pp_cloth(img_name: str = Form(...)) -> bool:
