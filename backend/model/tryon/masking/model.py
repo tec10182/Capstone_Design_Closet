@@ -41,7 +41,7 @@ def predict_mask(storage_root: str, img_name: str, mode: str):
 
 
     if mode == 'person':
-        img_path = osp.join(storage_root, 'raw_data/person', img_name)
+        img_path = osp.join(storage_root, 'tryon/raw_data/person', img_name)
     elif mode == 'cloth':
         img_path = osp.join(storage_root, 'images', img_name)
     else:

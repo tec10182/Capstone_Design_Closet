@@ -23,6 +23,7 @@ from db import *
 from model.tryon.masking.model import predict_mask
 from model.tryon.schp.model import human_parsing
 from model.tryon.densepose.model import predict_dense_pose_map
+from model.tryon.pose_estimation.model import predict_pose_kpts
 
 router = APIRouter()
 
@@ -89,17 +90,12 @@ async def pp_person(img_name: str = Form(...)) -> dict:
     parse_map_save_state = human_parsing(configs['storage'], img_name)
     dense_pose_save_state = predict_dense_pose_map(configs['storage'], img_name)
 
-    # mask_save_state = await mask_client.predict_mask(configs['storage'], img_name, category='person')
-    #
-    # if mask_save_state:
-    #     pose_save_state = await pose_estimation_client.predict_pose_kpts(configs['storage'], img_name, model_name)
-    #
-    # return {"parse map": parse_map_save_state, "dense pose map": dense_pose_save_state,
-    #         "mask": mask_save_state, "pose img & kpts": pose_save_state}
+    mask_save_state = predict_mask(configs['storage'], img_name, mode='person')
 
-    return {"parse map": parse_map_save_state, "dense pose map": dense_pose_save_state}
+    pose_save_state = predict_pose_kpts(configs['storage'], img_name)
 
-
+    return {"parse map": parse_map_save_state, "dense pose map": dense_pose_save_state,
+            "mask": mask_save_state, "pose img & kpts": pose_save_state}
 
 @router.post("/preprocess/cloth")
 async def pp_cloth(img_name: str = Form(...)) -> bool:
