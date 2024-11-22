@@ -14,9 +14,9 @@ import numpy as np
 import json
 
 # custom-library
-# from infra.viton.hr_viton.get_parse_agnostic import get_im_parse_agnostic
+from model.tryon.hr_viton.get_parse_agnostic import get_im_parse_agnostic
 
-from get_parse_agnostic import get_im_parse_agnostic
+# from get_parse_agnostic import get_im_parse_agnostic
 
 
 class CPDatasetTest(data.Dataset):
@@ -144,14 +144,15 @@ class CPDatasetTest(data.Dataset):
             cm[key].unsqueeze_(0)
 
         # 사람 이미지
-        im_pil_big = Image.open(osp.join(self.data_path, im_name))
+        im_pil_big = Image.open(osp.join(self.data_path, "tryon/raw_data/person" ,im_name))
         im_pil = transforms.Resize((self.fine_height, self.fine_width), interpolation=2)(im_pil_big)
         
         im = self.transform(im_pil)
 
         # human parsing 이미지
-        parse_name = im_name.replace('.jpg', '.png')
-        im_parse_pil_big = Image.open(osp.join(self.data_path, 'preprocess/human_parse', parse_name))
+        #parse_name = im_name.replace('.jpg', '.png')
+        parse_name = im_name
+        im_parse_pil_big = Image.open(osp.join(self.data_path, 'tryon/preprocess/human_parse', parse_name))
         im_parse_pil = transforms.Resize((self.fine_height, self.fine_width), interpolation=0)(im_parse_pil_big)
         parse = torch.from_numpy(np.array(im_parse_pil)[None]).long()
         im_parse = self.transform(im_parse_pil.convert('RGB'))
@@ -202,8 +203,8 @@ class CPDatasetTest(data.Dataset):
         im_c = im * pcm + (1 - pcm)
         
         # 포즈 이미지, 포즈 키포인트 불러오기
-        pose_name = im_name
-        pose_map = Image.open(osp.join(self.data_path, 'preprocess/pose/img', pose_name))
+        pose_name = im_name.replace('.jpg', '.png')
+        pose_map = Image.open(osp.join(self.data_path, 'tryon/preprocess/pose/img', pose_name))
         pose_map = transforms.Resize((self.fine_height, self.fine_width), interpolation=2)(pose_map)
         pose_map = self.transform(pose_map)  # [-1,1]
         
@@ -211,8 +212,8 @@ class CPDatasetTest(data.Dataset):
         # pose 추출을 (384, 512)에서 하고 (768, 1024)로 resize하는 것이니 우선은 pose_data에 * 2 를 해주자.
         # 원래 openpose 모델은 손까지 검출해서 더 많은 kpts가 존재하는데, 우리는 body25만 뽑고 있음
         # 따라서 reshape한 pose_data의 형태가 다르므로, 생성 결과 또한 달라질 수 있음.
-        pose_name = im_name.replace('.jpg', '.json')
-        with open(osp.join(self.data_path, 'preprocess/pose/keypoints', pose_name), 'r') as f:
+        pose_name = im_name.replace('.png', '.json')
+        with open(osp.join(self.data_path, 'tryon/preprocess/pose/keypoints', pose_name), 'r') as f:
             pose_label = json.load(f)
             pose_data = pose_label['people'][0]['pose_keypoints_2d']
             pose_data = np.array(pose_data) * 2
@@ -221,7 +222,7 @@ class CPDatasetTest(data.Dataset):
         
         # densepose 이미지 불러오기
         densepose_name = im_name
-        densepose_map = Image.open(osp.join(self.data_path, 'preprocess/densepose', densepose_name))
+        densepose_map = Image.open(osp.join(self.data_path, 'tryon/preprocess/densepose', densepose_name))
         densepose_map = transforms.Resize((self.fine_height, self.fine_width), interpolation=2)(densepose_map)
         densepose_map = self.transform(densepose_map)  # [-1,1]
 

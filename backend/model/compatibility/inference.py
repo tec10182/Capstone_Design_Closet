@@ -52,16 +52,16 @@ def load_model(args):
 
     return recommendation_model, input_processor
 
-def make_embedding(image: np.ndarray, description: str, category : str) -> dict:
-    args = Args()
-    args.model_path = './model/compatibility/src/checkpoints/cp_auc0.91.pth'
-
+def make_embedding(image: np.ndarray, description: str, category : str, model, input_processor) -> dict:
+    # args = Args()
+    # args.model_path = './model/compatibility/src/checkpoints/cp_auc0.91.pth'
+    #
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-    model, input_processor = load_model(args)
-    model.to(device)
-
-    model.eval()
+    #
+    # model, input_processor = load_model(args)
+    # model.to(device)
+    #
+    # model.eval()
 
     with torch.no_grad():
         with torch.cuda.amp.autocast():
@@ -72,16 +72,16 @@ def make_embedding(image: np.ndarray, description: str, category : str) -> dict:
     return input_embeddings
 
 
-def make_score(embeddings: List[dict]) -> int:
-    args = Args()
-    args.model_path = './model/compatibility/src/checkpoints/cp_auc0.91.pth'
-
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-    model, input_processor = load_model(args)
-    model.to(device)
-
-    model.eval()
+def make_score(embeddings: List[dict],model, input_processor) -> int:
+    # args = Args()
+    # args.model_path = './model/compatibility/src/checkpoints/cp_auc0.91.pth'
+    #
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    #
+    # model, input_processor = load_model(args)
+    # model.to(device)
+    #
+    # model.eval()
 
     with torch.no_grad():
         with torch.cuda.amp.autocast():

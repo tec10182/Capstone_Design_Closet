@@ -24,6 +24,8 @@ from model.tryon.masking.model import predict_mask
 from model.tryon.schp.model import human_parsing
 from model.tryon.densepose.model import predict_dense_pose_map
 from model.tryon.pose_estimation.model import predict_pose_kpts
+from model.tryon.hr_viton.model import hr_inference
+#from model.tryon.ladi_viton.model import ladi_inference
 
 router = APIRouter()
 
@@ -108,9 +110,9 @@ async def pp_cloth(img_name: str = Form(...)) -> bool:
 
 @router.post("/generate")
 async def gen_viton_img(p_img_name: str = Form(...), c_img_name: str = Form(...))->str:
-    model_name = "hr_viton"
-    category = ["upper_body", "lower_body"] #model_name = ladi_viton 일 경우에만 사용
-
-    # tryon_img_base64 = await getattr(viton_client, model_name)(configs['storage'], p_img_name, c_img_name, category)
-
-    return "tryon_img_base64"
+    img_name = hr_inference(configs['storage'], p_img_name, c_img_name)
+    return img_name
+    # category = "upper_body"
+    # tryon_img_base64 = ladi_inference(configs['storage'], p_img_name, c_img_name, category)
+    #
+    # return tryon_img_base64

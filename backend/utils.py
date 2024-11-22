@@ -27,18 +27,6 @@ def change_description(text: str) -> str:
     return text
 
 
-def make_category(image: np.ndarray) -> str:
-    classifier = pipeline("zero-shot-image-classification", model="patrickjohncyh/fashion-clip", device='cuda')
-    classification = ['bottoms', 'tops', 'outers']
-
-    pil_image = Image.fromarray(image)
-
-    scores = classifier(pil_image, candidate_labels=classification)
-
-    # 오류로 tops, bottom을 구별을 잘 못해서 임시로 랜덤으로 카테고리 넣기
-    return scores[0]['label']
-    # return random.choice(["tops", "bottoms"])
-
 def make_file_name(save_path: str) -> str:
     existing_files = [
         int(f.split(".")[0]) for f in os.listdir(save_path) if f.split(".")[0].isdigit()

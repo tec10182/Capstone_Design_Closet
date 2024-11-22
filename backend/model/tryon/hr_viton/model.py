@@ -13,19 +13,20 @@ import os.path as osp
 import time
 from collections import OrderedDict
 import warnings
+from pathlib import Path
 
 # custom-library
-# from model.tryon.viton.hr_viton.cp_dataset_test import CPDatasetTest, CPDataLoader
-# from model.tryon.hr_viton.networks import ConditionGenerator, load_checkpoint, make_grid
-# from model.tryon.hr_viton.network_generator import SPADEGenerator
-# from model.tryon.hr_viton.utils import *
-# from model.tryon.hr_viton.config import get_opt
+from model.tryon.hr_viton.cp_dataset_test import CPDatasetTest, CPDataLoader
+from model.tryon.hr_viton.networks import ConditionGenerator, load_checkpoint, make_grid
+from model.tryon.hr_viton.network_generator import SPADEGenerator
+from model.tryon.hr_viton.utils import *
+from model.tryon.hr_viton.config import get_opt
 
-from cp_dataset_test import CPDatasetTest, CPDataLoader
-from networks import ConditionGenerator, load_checkpoint, make_grid
-from network_generator import SPADEGenerator
-from utils import *
-from config import get_opt
+# from cp_dataset_test import CPDatasetTest, CPDataLoader
+# from networks import ConditionGenerator, load_checkpoint, make_grid
+# from network_generator import SPADEGenerator
+# from utils import *
+# from config import get_opt
 
 import torchgeometry as tgm
 
@@ -187,7 +188,7 @@ def test(opt, test_loader, tocg, generator, person_img_name, cloth_img_name):
 
             output = generator(torch.cat((agnostic, densepose, warped_cloth), dim=1), parse)
             save_name = person_img_name.split('.')[0] + '_' + cloth_img_name.split('.')[0] + '.png'
-            save_images(output, [save_name], '/opt/ml/storage/viton')
+            save_images(output, [save_name], 'D:\\storage\\tryon\\output')
             
 
             return save_name
@@ -212,7 +213,7 @@ def test(opt, test_loader, tocg, generator, person_img_name, cloth_img_name):
     # print(f"Test time {time.time() - iter_start_time}")
 
 
-def inference(storage_root: str, person_img_name: str, cloth_img_name: str):
+def hr_inference(storage_root: str, person_img_name: str, cloth_img_name: str):
     opt = get_opt()
     opt.dataroot = storage_root
     opt.output_dir = "D:\\storage\\tryon\\output"
@@ -236,18 +237,21 @@ def inference(storage_root: str, person_img_name: str, cloth_img_name: str):
     generator = SPADEGenerator(opt, 3 + 3 + 3)
     # generator.print_network()
 
+    # 현재 이 .py가 있는 부모 경로를 절대경로로 지정(./human_parser 폴더 경로)
+    PROJECT_ROOT = Path(__file__).absolute().parents[0].absolute()
+
+    # pretrained 모델 경로
+    tocg_checkpoint = osp.join(PROJECT_ROOT, 'checkpoints', 'mtviton.pth')
+    gen_checkpoint = osp.join(PROJECT_ROOT, 'checkpoints', 'gen.pth')
+
     # Load Checkpoint
-    load_checkpoint(tocg, opt.tocg_checkpoint, opt)
-    load_checkpoint_G(generator, opt.gen_checkpoint, opt)
+    load_checkpoint(tocg, tocg_checkpoint, opt)
+    load_checkpoint_G(generator, gen_checkpoint, opt)
     #
     # Train
     img_name = test(opt, test_loader, tocg, generator, person_img_name, cloth_img_name)
 
-    print("Finished testing!")
-    print(type(img_name))
-    #
-    # return img_name
-
+    return img_name
 
 if __name__ == "__main__":
-    inference("D:\\storage", "model_sample.jpg", "1.png")
+    hr_inference("D:\\storage", "model_sample.jpg", "3.png")

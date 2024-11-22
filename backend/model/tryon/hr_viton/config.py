@@ -22,8 +22,8 @@ def get_opt():
 
     parser.add_argument('--tensorboard_dir', type=str, default='./data/zalando-hd-resize/tensorboard', help='save tensorboard infos')
     parser.add_argument('--checkpoint_dir', type=str, default='checkpoints', help='save checkpoint infos')
-    parser.add_argument('--tocg_checkpoint', type=str, default='/opt/ml/VIT-ON-Demo/backend/infra/viton/hr_viton/eval_models/weights/v0.1/mtviton.pth', help='tocg checkpoint')
-    parser.add_argument('--gen_checkpoint', type=str, default='/opt/ml/VIT-ON-Demo/backend/infra/viton/hr_viton/eval_models/weights/v0.1/gen.pth', help='G checkpoint')
+    parser.add_argument('--tocg_checkpoint', type=str, default='./model/tryon/hr_viton/checkpoints/mtviton.pth', help='tocg checkpoint')
+    parser.add_argument('--gen_checkpoint', type=str, default='./model/tryon/hr_viton/checkpoints/gen.pth', help='G checkpoint')
 
     parser.add_argument("--tensorboard_count", type=int, default=100)
     parser.add_argument("--shuffle", action='store_true', help='shuffle input data')
@@ -50,6 +50,6 @@ def get_opt():
     parser.add_argument('--num_upsampling_layers', choices=('normal', 'more', 'most'), default='most', # normal: 256, more: 512
                         help="If 'more', adds upsampling layer between the two middle resnet blocks. If 'most', also add one more upsampling + resnet layer at the end of the generator")
 
-    opt = parser.parse_args()
+    opt , unknown = parser.parse_known_args()
 
     return opt
