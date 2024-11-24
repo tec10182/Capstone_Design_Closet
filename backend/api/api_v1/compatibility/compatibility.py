@@ -19,12 +19,13 @@ import numpy as np
 from io import BytesIO
 
 import numpy as np
+import pickle
 
 router = APIRouter()
 
 
-# http://127.0.0.1:8000/api/v1/compatibility/score
-@router.post("/score", response_model=CompatibilityResponseModel)
+# http://127.0.0.1:8000/api/v1/compatibility/recommend
+@router.post("/recommend", response_model=CompatibilityResponseModel)
 async def score(
     id: str = Form(...), file: UploadFile = File(...), db: Session = Depends(get_db)
 ):
@@ -35,14 +36,14 @@ async def score(
     numpy_image = np.array(image)
     description = make_description(numpy_image)
     description = change_description(description)
-    category = make_category(description)
-    embedding = make_embedding(numpy_image, description)
+    category = make_category(numpy_image)
+    embedding = make_embedding(numpy_image, description, category)
 
     # category에 맞는 임베딩 가져오기
-    if category == "top":
-        result = read_image_embedding(db, "bottom", id)
+    if category == "tops":
+        result = read_image_embedding(db, "bottoms", id)
     else:
-        result = read_image_embedding(db, "top", id)
+        result = read_image_embedding(db, "tops", id)
 
     images = result.get("images", [])
     embeddings = result.get("embeddings", [])
@@ -66,7 +67,7 @@ async def score(
 
         path = os.path.join(settings.storage_path, "embeddings")
         embedding_path = os.path.join(path, embedding_path)
-        embedding = np.load(embedding_path)
+        embedding = np.load(embedding_path, allow_pickle=True)
 
         if category == "top":
             score = make_score([anchor, embedding])
@@ -95,4 +96,18 @@ async def score(
         success=True,
     )
 
+
+# http://127.0.0.1:8000/api/v1/compatibility/score
+@router.post("/score", response_model=ScoreResponseModel)
+async def single_score(image_info: Imageid,db: Session = Depends(get_db)):
+    image_ids = image_info.image
+    embeddings = []
+    for image_id in image_ids:
+        embedding_name = image_id.split(".")[0]+".npy"
+        embeddings.append(embedding_name)
+    score = make_score(embeddings)
+
+    return ScoreResponseModel(
+        score = score
+    )
 
