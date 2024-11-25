@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
-@ dataclass
+
+@dataclass
 class Args:
-    
+
     # Dataset & Input Processor Settings
     # polyvore_split = 'nondisjoint'
-    categories = ['bottoms', 'tops', 'outers']
+    categories = ["bottoms", "tops"]
     outfit_max_length = 3
     use_image = True
     use_text = True
@@ -13,8 +14,8 @@ class Args:
 
     # Embedder&Recommender Model Settings
     use_clip_embedding = False
-    clip_huggingface = 'patrickjohncyh/fashion-clip'
-    huggingface = 'sentence-transformers/all-MiniLM-L12-v2'
+    clip_huggingface = "patrickjohncyh/fashion-clip"
+    huggingface = "sentence-transformers/all-MiniLM-L12-v2"
     hidden = 128
     ffn_hidden = 2024
     n_layers = 6

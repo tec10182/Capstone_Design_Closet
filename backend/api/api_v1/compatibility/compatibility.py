@@ -25,27 +25,12 @@ import numpy as np
 import pickle
 
 router = APIRouter()
-warnings.filterwarnings('ignore') # 짜잘한 에러 무시
+warnings.filterwarnings("ignore")  # 짜잘한 에러 무시
 
-#description 및 category model 불러오기
-Blip_path = "C:\\Users\\han\\PycharmProjects\\Backend\\Capstone_Design_Closet\\backend\\model\\descriptor\\blip_base_fashion\\"
-description_processor = BlipProcessor.from_pretrained(Blip_path)
-description_model = BlipForConditionalGeneration.from_pretrained(Blip_path, from_tf=True).to("cuda")
-
-swin_path = "C:\\Users\\han\\PycharmProjects\\Backend\\Capstone_Design_Closet\\backend\\model\\descriptor\\swin\\"
-category_processor = AutoImageProcessor.from_pretrained(swin_path)
-category_model = AutoModelForImageClassification.from_pretrained(swin_path).to("cuda")
-
-#compatibility model 불러오기
-args = Args()
-args.model_path = './model/compatibility/src/checkpoints/cp_auc0.91.pth'
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-compatibility_model, input_processor = load_model(args)
-compatibility_model.to(device)
+description_model, description_processor = load_description_model()
+category_model, category_processor = load_classification_model()
+compatibility_model, input_processor = load_compatibility_model()
 compatibility_model.eval()
-
 
 
 # http://127.0.0.1:8000/api/v1/compatibility/score
@@ -58,11 +43,14 @@ async def score(
     if image.mode == "RGBA":
         image = image.convert("RGB")
     numpy_image = np.array(image)
-    description = make_description(numpy_image,description_processor,description_model)
+    description = make_description(
+        numpy_image, description_processor, description_model
+    )
     description = change_description(description)
-    category = make_category(numpy_image,category_processor,category_model)
-    embedding = make_embedding(numpy_image, description, category,compatibility_model, input_processor)
-
+    category = make_category(numpy_image, category_processor, category_model)
+    embedding = make_embedding(
+        numpy_image, description, category, compatibility_model, input_processor
+    )
 
     # category에 맞는 임베딩 가져오기
     if category == "tops":
@@ -92,14 +80,18 @@ async def score(
 
         path = os.path.join(settings.storage_path, "embeddings")
         embedding_path = os.path.join(path, embedding_path)
-        #embedding = np.load(embedding_path,allow_pickle=True)
+        # embedding = np.load(embedding_path,allow_pickle=True)
         with open(embedding_path, "rb") as fb:
             embedding = pickle.loads(fb.read())
 
         if category == "top":
-            score = make_score([anchor, embedding],compatibility_model, input_processor)
+            score = make_score(
+                [anchor, embedding], compatibility_model, input_processor
+            )
         else:
-            score = make_score([embedding, anchor],compatibility_model, input_processor)
+            score = make_score(
+                [embedding, anchor], compatibility_model, input_processor
+            )
         image_score_pairs.append((image_path, score))  # 이미지와 score 매칭
 
     # score 내림차순으로 정렬
