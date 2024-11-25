@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, File, UploadFile, Body, Form
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException
+
 import shutil
 
 from sqlalchemy.orm import Session
@@ -44,7 +46,9 @@ async def upload_image(
         # 카테고리 생성함수
         category = make_category(description)
         # 이미지 임베딩 하는 함수
-        embedding = make_embedding(numpy_image, description)
+        category = make_category(numpy_image)
+
+        embedding = make_embedding(numpy_image, description, category)
 
         # 임베딩 저장하는 부분
         save_path = os.path.join(settings.storage_path, "embeddings")

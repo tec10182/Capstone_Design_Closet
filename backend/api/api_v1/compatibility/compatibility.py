@@ -9,6 +9,7 @@ from core import *
 from scheme import *
 from crud import *
 from utils import *
+from model import *
 
 from db import *
 
@@ -90,7 +91,8 @@ async def score(
 
     # 이미지 응답 반환
     return CompatibilityResponseModel(
-        image=best_images_bytes,
+        image1=best_images_bytes,
+        image2=best_images_bytes,
         score=best_scores,
         avg_score=int(avg_score),
         success=True,
