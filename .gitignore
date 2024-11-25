@@ -3,6 +3,8 @@ env
 .env
 db명령어
 
+backend/model/classification/swin/
+
 backend/model/tryon/hr_viton/checkpoints/
 
 backend/model/compatibility/src/checkpoints/
@@ -14,3 +16,4 @@ backend/model/descriptor/swin/
 backend/model/tryon/schp/checkpoints/
 
 backend/model/tryon/pose_estimation/src/
+
