@@ -54,14 +54,19 @@ async def score(
 
     # category에 맞는 임베딩 가져오기
     if category == "tops":
-        result = read_image_embedding(db, "bottoms", id)
-    else:
-        result = read_image_embedding(db, "tops", id)
+        result1 = read_image_embedding(db, "bottoms", id)
+        result2 = read_image_embedding(db, "shoes", id)
+    elif category == "bottoms":
+        result1 = read_image_embedding(db, "tops", id)
+        result2 = read_image_embedding(db, "shoes", id)
 
-    images = result.get("images", [])
-    embeddings = result.get("embeddings", [])
+    images1 = result1.get("images", [])
+    embeddings1 = result1.get("embeddings", [])
 
-    if len(embeddings) == 0:
+    images2 = result2.get("images", [])
+    embeddings2 = result2.get("embeddings", [])
+
+    if len(embeddings1) == 0 or len(embeddings2) == 0:
         return CompatibilityResponseModel(
             image=[],
             score=[],
@@ -74,42 +79,57 @@ async def score(
     anchor = embedding
 
     # 각 이미지와 임베딩을 매칭하여 score 계산
-    for image_path, embedding_path in zip(images, embeddings):
+    for image_path1, embedding_path1 in zip(images1, embeddings1):
         path = os.path.join(settings.storage_path, "images")
-        image_path = os.path.join(path, image_path)
+        image_path1 = os.path.join(path, image_path1)
 
-        path = os.path.join(settings.storage_path, "embeddings")
-        embedding_path = os.path.join(path, embedding_path)
-        # embedding = np.load(embedding_path,allow_pickle=True)
-        with open(embedding_path, "rb") as fb:
-            embedding = pickle.loads(fb.read())
+        path1 = os.path.join(settings.storage_path, "embeddings")
+        embedding_path1 = os.path.join(path1, embedding_path1)
 
-        if category == "top":
-            score = make_score(
-                [anchor, embedding], compatibility_model, input_processor
-            )
-        else:
-            score = make_score(
-                [embedding, anchor], compatibility_model, input_processor
-            )
-        image_score_pairs.append((image_path, score))  # 이미지와 score 매칭
+        with open(embedding_path1, "rb") as fb:
+            embedding1 = pickle.loads(fb.read())
+
+        for image_path2, embedding_path2 in zip(images2, embeddings2):
+            image_path2 = os.path.join(path, image_path2)
+
+            path2 = os.path.join(settings.storage_path, "embeddings")
+            embedding_path2 = os.path.join(path2, embedding_path2)
+
+            with open(embedding_path2, "rb") as fb:
+                embedding2 = pickle.loads(fb.read())
+
+            if category == "tops":
+                score = make_score(
+                    [anchor, embedding1, embedding2],
+                    compatibility_model,
+                    input_processor,
+                )
+            elif category == "bottoms":
+                score = make_score(
+                    [embedding1, anchor, embedding2],
+                    compatibility_model,
+                    input_processor,
+                )
+            image_score_pairs.append((image_path1, image_path2, score))
 
     # score 내림차순으로 정렬
     image_score_pairs.sort(key=lambda x: x[1], reverse=True)
 
     # 가장 높은 3개의 score 구하기
-    best_images = [pair[0] for pair in image_score_pairs[:3]]  # 상위 3개 이미지
-    best_scores = [pair[1] for pair in image_score_pairs[:3]]  # 상위 3개 score
+    best_images = [[pair[0], pair[1]] for pair in image_score_pairs[:3]]
+    best_scores = [pair[2] for pair in image_score_pairs[:3]]
 
     # 3개 score 평균 계산
     avg_score = sum(best_scores) / len(best_scores)
 
     # best_images를 바이너리 스트림으로 변환하여 반환
-    best_images_bytes = [image_path_to_bytes(img) for img in best_images]
+    best_images_bytes1 = [image_path_to_bytes(img[0]) for img in best_images]
+    best_images_bytes2 = [image_path_to_bytes(img[1]) for img in best_images]
 
     # 이미지 응답 반환
     return CompatibilityResponseModel(
-        image=best_images_bytes,
+        image1=best_images_bytes1,
+        image2=best_images_bytes2,
         score=best_scores,
         avg_score=int(avg_score),
         success=True,

@@ -6,7 +6,7 @@ class Args:
 
     # Dataset & Input Processor Settings
     # polyvore_split = 'nondisjoint'
-    categories = ["bottoms", "tops"]
+    categories = ["bottoms", "tops", "shoes"]
     outfit_max_length = 3
     use_image = True
     use_text = True

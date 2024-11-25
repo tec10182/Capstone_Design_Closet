@@ -22,7 +22,7 @@ def make_category(image: np.ndarray, category_processor, category_model) -> str:
     label2category = {
         "LABEL_0": "bottoms",
         "LABEL_1": "outers",
-        "LABEL_2": "shoes_wrong category",
+        "LABEL_2": "shoes",
         "LABEL_3": "tops",
     }
 

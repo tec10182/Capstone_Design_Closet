@@ -10,7 +10,8 @@ class Cloth(BaseModel):
 
 
 class CompatibilityResponseModel(BaseModel):
-    image: List[str]
+    image1: List[str]
+    image2: List[str]
     score: List[int]
     avg_score: int
     success: bool
