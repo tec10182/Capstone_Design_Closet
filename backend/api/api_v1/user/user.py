@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List
 import os
@@ -124,7 +124,7 @@ async def resign(user: User, db: Session = Depends(get_db)) -> Sign:
 
 # http://127.0.0.1:8000/api/v1/user/image
 @router.post("/image", response_model=ImageResponseModel)
-async def get_image(id: str, db: Session = Depends(get_db)):
+async def get_image(id: str = Query(...), db: Session = Depends(get_db)):
     result = read_image_from_id(db, id)
     image_paths = result.get("image", [])
     category = result.get("category", [])
@@ -134,4 +134,4 @@ async def get_image(id: str, db: Session = Depends(get_db)):
         image_path = os.path.join(path, image_path)
         images.append(image_path_to_bytes(image_path))
 
-    return ImageResponseModel(image=images, category=category)
+    return ImageResponseModel(image=images, category=category, image_id=image_paths)

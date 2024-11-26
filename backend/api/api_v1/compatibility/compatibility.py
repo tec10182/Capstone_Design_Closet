@@ -101,15 +101,12 @@ async def score(
 
 # http://127.0.0.1:8000/api/v1/compatibility/score
 @router.post("/score", response_model=ScoreResponseModel)
-async def single_score(image_info: Imageid,db: Session = Depends(get_db)):
+async def single_score(image_info: Imageid, db: Session = Depends(get_db)):
     image_ids = image_info.image
     embeddings = []
     for image_id in image_ids:
-        embedding_name = image_id.split(".")[0]+".npy"
+        embedding_name = image_id.split(".")[0] + ".npy"
         embeddings.append(embedding_name)
     score = make_score(embeddings)
 
-    return ScoreResponseModel(
-        score = score
-    )
-
+    return ScoreResponseModel(score=score)

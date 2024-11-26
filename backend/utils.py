@@ -28,7 +28,8 @@ def change_description(text: str) -> str:
 
 
 def make_category(image: np.ndarray) -> str:
-    return random.choice(["tops", "bottoms"])
+    return random.choice(["tops", "bottoms", "shoes"])
+
 
 def make_file_name(save_path: str) -> str:
     existing_files = [

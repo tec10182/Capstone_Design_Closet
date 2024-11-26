@@ -44,7 +44,7 @@ async def upload_image(
         # 이미지 description 변경 함수
         description = change_description(description)
         # 카테고리 생성함수
-        category = make_category(description)
+
         # 이미지 임베딩 하는 함수
         category = make_category(numpy_image)
 
