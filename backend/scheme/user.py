@@ -20,3 +20,5 @@ class Sign(BaseModel):
 class ImageResponseModel(BaseModel):
     image: List[str]  # base64로 인코딩된 이미지 리스트
     category: List[str]  # 문자열 리스트
+    image_id: List[str]
+

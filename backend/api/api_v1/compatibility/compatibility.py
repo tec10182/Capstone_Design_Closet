@@ -34,7 +34,7 @@ compatibility_model.eval()
 
 
 # http://127.0.0.1:8000/api/v1/compatibility/score
-@router.post("/score", response_model=CompatibilityResponseModel)
+@router.post("/recommend", response_model=CompatibilityResponseModel)
 async def score(
     id: str = Form(...), file: UploadFile = File(...), db: Session = Depends(get_db)
 ):
@@ -102,13 +102,11 @@ async def score(
                 score = make_score(
                     [anchor, embedding1, embedding2],
                     compatibility_model,
-                    input_processor,
                 )
             elif category == "bottoms":
                 score = make_score(
                     [embedding1, anchor, embedding2],
                     compatibility_model,
-                    input_processor,
                 )
             image_score_pairs.append((image_path1, image_path2, score))
 
@@ -134,3 +132,20 @@ async def score(
         avg_score=int(avg_score),
         success=True,
     )
+
+
+@router.post("/score", response_model=ScoreResponseModel)
+async def single_score(image_info: Imageid, db: Session = Depends(get_db)):
+    image_ids = image_info.image
+    embeddings = []
+    for image_id in image_ids:
+        embedding_name = image_id.split(".")[0] + ".pickle"
+        embedding_path = os.path.join(
+            settings.storage_path, "embeddings", embedding_name
+        )
+        with open(embedding_path, "rb") as fb:
+            embedding = pickle.loads(fb.read())
+        embeddings.append(embedding)
+    score = make_score(embeddings, compatibility_model)
+
+    return ScoreResponseModel(score=score)

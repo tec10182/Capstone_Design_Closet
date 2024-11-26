@@ -15,3 +15,11 @@ class CompatibilityResponseModel(BaseModel):
     score: List[int]
     avg_score: int
     success: bool
+
+
+class ScoreResponseModel(BaseModel):
+    score: int
+
+
+class Imageid(BaseModel):
+    image: List[str]

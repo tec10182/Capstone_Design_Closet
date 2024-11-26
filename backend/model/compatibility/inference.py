@@ -90,7 +90,7 @@ def make_embedding(
     return input_embeddings
 
 
-def make_score(embeddings: List[dict], model, input_processor) -> int:
+def make_score(embeddings: List[dict], model) -> int:
 
     with torch.no_grad():
         with torch.cuda.amp.autocast():
