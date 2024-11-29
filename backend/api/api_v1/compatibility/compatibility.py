@@ -111,7 +111,7 @@ async def score(
             image_score_pairs.append((image_path1, image_path2, score))
 
     # score 내림차순으로 정렬
-    image_score_pairs.sort(key=lambda x: x[1], reverse=True)
+    image_score_pairs.sort(key=lambda x: x[2], reverse=True)
 
     # 가장 높은 3개의 score 구하기
     best_images = [[pair[0], pair[1]] for pair in image_score_pairs[:3]]
