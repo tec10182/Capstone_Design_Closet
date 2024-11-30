@@ -59,6 +59,9 @@ async def score(
     elif category == "bottoms":
         result1 = read_image_embedding(db, "tops", id)
         result2 = read_image_embedding(db, "shoes", id)
+    else:
+        result1 = read_image_embedding(db,"tops",id)
+        result2 = read_image_embedding(db,"bottoms",id)
 
     images1 = result1.get("images", [])
     embeddings1 = result1.get("embeddings", [])
