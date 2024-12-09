@@ -131,3 +131,27 @@ async def get_image(id: str = Query(...), db: Session = Depends(get_db)):
         images.append(image_path_to_bytes(image_path))
 
     return ImageResponseModel(image=images, category=category, image_id=image_paths)
+
+
+@router.post("/change", response_model=ChangeResponse)
+async def change_category(image_change: ImageChange, db: Session = Depends(get_db)):
+    category = image_change.category
+    image_id = image_change.image_id
+
+    try:
+        result = update_category(db, image_id, category)
+    except Exception as e:
+        return HTTPException(status_code=500, detail="DB ERROR")
+
+    return ChangeResponse(success=True)
+
+
+@router.post("/delete", response_model=DeleteResponse)
+async def del_image(image_delete: ImageDelete, db: Session = Depends(get_db)):
+    image_name = image_delete.image_id
+    try:
+        result = delete_image(db, image_name)
+    except Exception as e:
+        return HTTPException(status_code=500, detail="DB ERROR")
+
+    return DeleteResponse(success=True)

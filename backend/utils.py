@@ -7,6 +7,17 @@ from transformers import pipeline
 import numpy as np
 
 
+def remove_repeated_words(sentence):
+    words = sentence.split()
+    result = []
+
+    for word in words:
+        if not result or result[-1] != word:
+            result.append(word)
+
+    return " ".join(result)
+
+
 def change_description(text: str) -> str:
     """description을 compatibility 모델에 맞는 단어로 변경하는 과정
 
@@ -24,6 +35,7 @@ def change_description(text: str) -> str:
         text = text.replace(" hanging on a door", "")
     if "hanging on a hanger" in text:
         text = text.replace(" hanging on a hanger", "")
+    text = remove_repeated_words(text)
     return text
 
 

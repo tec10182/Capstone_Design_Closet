@@ -90,3 +90,37 @@ def read_image_from_id(db: Session, id: str):
     except Exception as e:
         # 예외가 발생하면 서버 오류 반환
         raise HTTPException(status_code=500, detail="DB ERROR")
+
+
+def update_category(db: Session, image_id: str, category: str):
+    try:
+        print(image_id, category)
+        sql = text(
+            "UPDATE items SET category = :category WHERE img_name = :image_name;"
+        )
+        result = db.execute(sql, {"image_name": image_id, "category": category})
+        db.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Item not found")
+    except Exception as e:
+        db.rollback()
+        print
+        raise HTTPException(status_code=500, detail="DB ERROR")
+
+    return result
+
+
+def delete_image(db: Session, image_name: str):
+    try:
+        sql = text("DELETE FROM items WHERE img_name = :image_name;")
+        result = db.execute(sql, {"image_name": image_name})
+        db.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Item not found")
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="DB ERROR")
+
+    return result
