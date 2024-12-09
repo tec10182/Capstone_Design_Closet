@@ -21,3 +21,20 @@ class ImageResponseModel(BaseModel):
     image: List[str]  # base64로 인코딩된 이미지 리스트
     category: List[str]  # 문자열 리스트
     image_id: List[str]
+
+
+class ImageChange(BaseModel):
+    category: str
+    image_id: str
+
+
+class ChangeResponse(BaseModel):
+    success: bool
+
+
+class ImageDelete(BaseModel):
+    image_id: str
+
+
+class DeleteResponse(BaseModel):
+    success: bool
